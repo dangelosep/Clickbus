@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+:root {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --border-subtle: #333333;
+    --primary-yellow: #f1c40f;
+    --text-main: #ffffff;
+    --text-muted: #a0a0a0;
+    --alert-green: #2ecc71;
+    --alert-red: #e74c3c;
+    --alert-blue: #3498db;
+}
+body {
+    background: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    margin: 0;
+    padding: 14px;
+    box-sizing: border-box;
+}
+* { box-sizing: border-box; }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+.row-bottom {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 12px;
+}
+
+.class-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 390px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.class-card:hover {
+    border-color: #555555;
+    transform: translateY(-2px);
+}
+
+/* Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.status-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.03);
+}
+.status-tag.competitive {
+    color: var(--primary-yellow);
+    border-color: rgba(241, 196, 15, 0.4);
+    background: rgba(241, 196, 15, 0.08);
+}
+.status-tag.semileito-ref {
+    color: var(--alert-blue);
+    border-color: rgba(52, 152, 219, 0.4);
+    background: rgba(52, 152, 219, 0.08);
+}
+
+/* Matriz de Dados Inline (Lado a Lado) */
+.data-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.matrix-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.matrix-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.matrix-values {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+.val-side {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.val-side .lbl-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.val-side.mkt {
+    color: var(--text-main);
+}
+.val-side.ita {
+    color: var(--primary-yellow);
+    font-weight: 700;
+}
+.matrix-divider {
+    color: var(--border-subtle);
+    font-size: 12px;
+}
+
+/* Área de Destaque Tático (GAP e Share) */
+.tactical-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 0;
+}
+.tactical-kpi {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.tactical-lbl {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+.tactical-val-gap {
+    font-size: 16px; /* 20% maior que 13px */
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+.gap-pos { color: var(--alert-green); }
+.gap-neg { color: var(--alert-red); }
+
+/* Mini-Gauge de Share */
+.share-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.share-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+.share-stats b {
+    color: var(--primary-yellow);
+}
+.mini-gauge-track {
+    background: #2a2a2a;
+    border-radius: 2px;
+    height: 4px;
+    width: 100%;
+    overflow: hidden;
+}
+.mini-gauge-fill {
+    background: var(--primary-yellow);
+    height: 100%;
+    border-radius: 2px;
+}
+
+/* Ghost Button */
+.card-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 6px;
+}
+.ghost-action-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 7px 12px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.ghost-action-btn:hover {
+    background: var(--primary-yellow);
+    border-color: var(--primary-yellow);
+    color: #121212;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);
+}
+</style>
+</head>
+<body>
+
+<div class="cards-grid">
+    <!-- Card 1: Cama Individual -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">CAMA INDIVIDUAL</span>
+            <span class="status-tag competitive">COMPETITIVO</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 533,45</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 544,06</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 1.678,93</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 1.678,93</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 131,81</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 131,81</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap gap-pos">▲ +2.0%</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>52.7%</b> dos assentos (673/1.277)</span>
+                    <span><b>59.7%</b> viagens (587/983)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 52.7%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 2: Cama Duplo -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">CAMA DUPLO</span>
+            <span class="status-tag competitive">COMPETITIVO</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 464,44</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 464,11</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 2.138,22</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 1.628,93</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 56,01</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 56,01</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap gap-neg">▼ -0.1%</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>29.1%</b> dos assentos (2.121/7.282)</span>
+                    <span><b>28.0%</b> viagens (782/2.797)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 29.1%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 3: Leito Duplo -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">LEITO DUPLO</span>
+            <span class="status-tag competitive">COMPETITIVO</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 432,28</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 328,63</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 1.463,15</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 591,86</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 103,52</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 112,39</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap gap-neg">▼ -24.0%</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>3.0%</b> dos assentos (269/8.929)</span>
+                    <span><b>4.0%</b> viagens (120/2.980)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 3.0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 4: Leito -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">LEITO</span>
+            <span class="status-tag competitive">COMPETITIVO</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 484,28</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 350,15</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 1.123,98</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 646,41</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 120,56</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 170,11</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap gap-neg">▼ -27.7%</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>3.0%</b> dos assentos (70/2.364)</span>
+                    <span><b>6.5%</b> viagens (51/788)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 3.0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+</div>
+
+<div class="cards-grid row-bottom">
+    <!-- Card 5: Semileito -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">SEMILEITO</span>
+            <span class="status-tag competitive">COMPETITIVO</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 355,43</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 294,45</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 1.440,99</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 1.406,23</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 9,25</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim</span>
+                        <span>R$ 9,25</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap gap-neg">▼ -17.2%</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>33.1%</b> dos assentos (77.697/234.534)</span>
+                    <span><b>26.8%</b> viagens (4.198/15.648)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 33.1%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 6: Convencional (Comparado c/ nosso Semileito) -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">CONVENCIONAL</span>
+            <span class="status-tag semileito-ref">COMPARADO C/ NOSSO SEMILEITO</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado (Convencional)</span>
+                        <span>R$ 414,49</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim (Semileito)</span>
+                        <span>R$ 294,45</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado (Convencional)</span>
+                        <span>R$ 1.483,72</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim (Semileito)</span>
+                        <span>R$ 1.406,23</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado (Convencional)</span>
+                        <span>R$ 63,99</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita">
+                        <span class="lbl-sub" style="color:rgba(241,196,15,0.7);">🚌 Itapemirim (Semileito)</span>
+                        <span>R$ 9,25</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap gap-neg">▼ -29.0%</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>47.4%</b> oferta equiv. (77.697 assentos)</span>
+                    <span><b>50.2%</b> viagens equiv. (4.198)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 47.4%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 7: Conexão -->
+    <div class="class-card">
+        <div class="card-header">
+            <span class="card-title">CONEXÃO</span>
+            <span class="status-tag">SEM OPERAÇÃO ITA</span>
+        </div>
+
+        <div class="data-matrix">
+            <div class="matrix-row">
+                <span class="matrix-label">Ticket Médio</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 547,94</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita" style="opacity:0.4;">
+                        <span class="lbl-sub">🚌 Itapemirim</span>
+                        <span>-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Teto Máximo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 989,98</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita" style="opacity:0.4;">
+                        <span class="lbl-sub">🚌 Itapemirim</span>
+                        <span>-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matrix-row">
+                <span class="matrix-label">Piso Mínimo</span>
+                <div class="matrix-values">
+                    <div class="val-side mkt">
+                        <span class="lbl-sub">🌍 Mercado</span>
+                        <span>R$ 307,98</span>
+                    </div>
+                    <span class="matrix-divider">|</span>
+                    <div class="val-side ita" style="opacity:0.4;">
+                        <span class="lbl-sub">🚌 Itapemirim</span>
+                        <span>-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tactical-area">
+            <div class="tactical-kpi">
+                <span class="tactical-lbl">GAP vs Mercado</span>
+                <span class="tactical-val-gap" style="color:var(--text-muted);">-</span>
+            </div>
+
+            <div class="share-block">
+                <div class="share-stats">
+                    <span><b>0.0%</b> assentos (0/3.012)</span>
+                    <span><b>0.0%</b> viagens (0/313)</span>
+                </div>
+                <div class="mini-gauge-track">
+                    <div class="mini-gauge-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="ghost-action-btn">Analisar no Pricing ➔</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

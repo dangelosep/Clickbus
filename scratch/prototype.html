@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+:root {
+    --bg-body: #0d0f12;
+    --bg-card: #161a1e;
+    --bg-subcard: #1e2329;
+    --primary-yellow: #f39c12;
+    --text-main: #f5f6fa;
+    --text-muted: #8c9ba5;
+    --border-color: #2b323a;
+    --alert-blue: #3498db;
+    --alert-green: #2ecc71;
+    --alert-red: #e74c3c;
+    --accent-purple: #9b59b6;
+}
+body {
+    background: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+* { box-sizing: border-box; }
+
+.prototype-title {
+    font-size: 16px;
+    color: var(--primary-yellow);
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+}
+
+.class-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    border-top: 3px solid var(--primary-yellow);
+    height: 380px;
+}
+.card-r4 { flex: 1 1 calc(25% - 8px); max-width: calc(25% - 8px); }
+.card-r3 { flex: 1 1 calc(33.333% - 8px); max-width: calc(33.333% - 8px); }
+
+/* Header do card */
+.c-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+.c-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+}
+.c-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.b-comp { background: rgba(243, 156, 18, 0.15); color: var(--primary-yellow); border: 1px solid var(--primary-yellow); }
+.b-antt { background: rgba(52, 152, 219, 0.15); color: var(--alert-blue); border: 1px solid var(--alert-blue); font-size: 9.5px; }
+
+/* OPÇÃO A: Dual Rows (Mercado x Itapemirim) exatamente igual à Visão de Mercado */
+.kpi-block-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    justify-content: center;
+}
+.section-lbl {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.kpi-mini-row {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+}
+.kpi-mini-card {
+    background: var(--bg-subcard);
+    border-radius: 5px;
+    padding: 6px 5px;
+    flex: 1;
+    min-width: 0;
+    border-top: 3px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.mini-lbl {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.mini-val {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.mini-val.ita {
+    color: var(--primary-yellow);
+}
+.mini-sub {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+.c-green { color: var(--alert-green); }
+.c-red { color: var(--alert-red); }
+
+/* OPÇÃO B: 5 Pilares de Comparação Direta */
+.pillars-row {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    flex: 1;
+    align-items: stretch;
+}
+.pillar-card {
+    background: var(--bg-subcard);
+    border-radius: 6px;
+    padding: 8px 6px;
+    flex: 1;
+    min-width: 0;
+    border-top: 3px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+.pillar-header {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.pillar-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 6px 0;
+}
+.p-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11px;
+}
+.p-row .lbl { color: var(--text-muted); font-size: 9px; }
+.p-row .val { font-weight: 800; font-size: 12px; }
+.p-row .val.ita { color: var(--primary-yellow); }
+.pillar-badge {
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    padding: 3px 2px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+/* Footer do card */
+.c-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.c-btn {
+    width: 100%;
+    background: rgba(243, 156, 18, 0.12);
+    border: 1px solid var(--primary-yellow);
+    color: var(--primary-yellow);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="prototype-title">Visão por Classes - Inspiração Direta da Visão de Mercado (Piso, Médio, Teto, Assentos, Viagens)</div>
+<div class="cards-grid">
+    <!-- Card 1: Cama Individual -->
+    <div class="class-card card-r4">
+        <div class="c-header">
+            <div>
+                <span class="c-title">💺 CAMA INDIVIDUAL</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G1 • Leito-Cama</span>
+            </div>
+            <span class="c-badge b-comp">Competitivo</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 131,81</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 420,10</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 1.678,93</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">1.277</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">983</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Nova Itapemirim</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 350,00</div>
+                    <div class="mini-sub c-green">+R$ 218,19</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 544,06</div>
+                    <div class="mini-sub c-green">▲ +29.5%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 800,00</div>
+                    <div class="mini-sub c-red">▼ -R$ 878,93</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">673</div>
+                    <div class="mini-sub c-green">52.7% share</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">587</div>
+                    <div class="mini-sub c-green">59.7% share</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 2: Cama Duplo -->
+    <div class="class-card card-r4">
+        <div class="c-header">
+            <div>
+                <span class="c-title">💺 CAMA DUPLO</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G1 • Leito-Cama</span>
+            </div>
+            <span class="c-badge b-comp">Competitivo</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 56,01</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 380,12</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 2.138,22</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">7.282</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">2.797</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Nova Itapemirim</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 150,00</div>
+                    <div class="mini-sub c-green">+R$ 93,99</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 464,11</div>
+                    <div class="mini-sub c-green">▲ +22.1%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 1.100,00</div>
+                    <div class="mini-sub c-red">▼ -R$ 1.038,22</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">2.121</div>
+                    <div class="mini-sub c-green">29.1% share</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">782</div>
+                    <div class="mini-sub c-green">28.0% share</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 3: Leito Duplo -->
+    <div class="class-card card-r4">
+        <div class="c-header">
+            <div>
+                <span class="c-title">💺 LEITO DUPLO</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G1 • Leito-Cama</span>
+            </div>
+            <span class="c-badge b-comp">Competitivo</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 103,52</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 315,80</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 1.463,15</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">8.929</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">2.980</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Nova Itapemirim</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 120,00</div>
+                    <div class="mini-sub c-green">+R$ 16,48</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 328,63</div>
+                    <div class="mini-sub c-green">▲ +4.1%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 650,00</div>
+                    <div class="mini-sub c-red">▼ -R$ 813,15</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">269</div>
+                    <div class="mini-sub c-green">3.0% share</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">120</div>
+                    <div class="mini-sub c-green">4.0% share</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 4: Leito -->
+    <div class="class-card card-r4">
+        <div class="c-header">
+            <div>
+                <span class="c-title">💺 LEITO</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G2 • Convencional</span>
+            </div>
+            <span class="c-badge b-comp">Competitivo</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 120,56</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 340,20</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 1.123,98</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">2.364</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">788</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Nova Itapemirim</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 140,00</div>
+                    <div class="mini-sub c-green">+R$ 19,44</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 350,15</div>
+                    <div class="mini-sub c-green">▲ +2.9%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 580,00</div>
+                    <div class="mini-sub c-red">▼ -R$ 543,98</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">70</div>
+                    <div class="mini-sub c-green">3.0% share</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">51</div>
+                    <div class="mini-sub c-green">6.5% share</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Linha 2: 3 Cards (Semileito, Convencional com ANTT, Conexão) -->
+    <!-- Card 5: Semileito -->
+    <div class="class-card card-r3">
+        <div class="c-header">
+            <div>
+                <span class="c-title">💺 SEMILEITO</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G2 • Convencional</span>
+            </div>
+            <span class="c-badge b-comp">Competitivo</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 9,25</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 290,10</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 1.440,99</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">234.534</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">15.648</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Nova Itapemirim</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 9,25</div>
+                    <div class="mini-sub" style="color:var(--text-muted);">0,0%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 294,45</div>
+                    <div class="mini-sub c-green">▲ +1.5%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 760,00</div>
+                    <div class="mini-sub c-red">▼ -R$ 680,99</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">77.697</div>
+                    <div class="mini-sub c-green">33.1% share</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">4.198</div>
+                    <div class="mini-sub c-green">26.8% share</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 6: Convencional (com ANTT Semileito) -->
+    <div class="class-card card-r3">
+        <div class="c-header">
+            <div>
+                <span class="c-title">🚌 CONVENCIONAL</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G2 • Convencional</span>
+            </div>
+            <span class="c-badge b-antt">⚖️ ANTT: Comparado c/ nosso Semileito</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado (Convencional)</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 63,99</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 280,45</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 1.483,72</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">86.343</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">4.165</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Itapemirim (Semileito - Regra ANTT)</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 9,25</div>
+                    <div class="mini-sub c-green">-R$ 54,74</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 294,45</div>
+                    <div class="mini-sub c-green">▲ +5.0%</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita"><span style="font-size:10px;opacity:0.7;">R$</span> 760,00</div>
+                    <div class="mini-sub c-red">▼ -R$ 723,72</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">77.697</div>
+                    <div class="mini-sub c-green">47.4% equiv.</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">4.198</div>
+                    <div class="mini-sub c-green">50.2% equiv.</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+
+    <!-- Card 7: Conexão -->
+    <div class="class-card card-r3">
+        <div class="c-header">
+            <div>
+                <span class="c-title">🔄 CONEXÃO</span>
+                <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">G2 • Convencional</span>
+            </div>
+            <span class="c-badge" style="background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid rgba(255,255,255,0.1);">Sem Operação Ita</span>
+        </div>
+        <div class="kpi-block-section">
+            <div class="section-lbl">🌍 Visão de Mercado</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue);">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 307,98</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 650,40</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red);">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val"><span style="font-size:10px;opacity:0.7;">R$</span> 989,98</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green);">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val">3.012</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple);">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val">313</div>
+                </div>
+            </div>
+
+            <div class="section-lbl" style="margin-top: 6px;">🚌 Operação Nova Itapemirim</div>
+            <div class="kpi-mini-row">
+                <div class="kpi-mini-card" style="border-color: var(--alert-blue); opacity: 0.5;">
+                    <div class="mini-lbl">Piso Mín</div>
+                    <div class="mini-val ita">-</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: #f1c40f; opacity: 0.5;">
+                    <div class="mini-lbl">Ticket Méd</div>
+                    <div class="mini-val ita">-</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-red); opacity: 0.5;">
+                    <div class="mini-lbl">Teto Máx</div>
+                    <div class="mini-val ita">-</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--alert-green); opacity: 0.5;">
+                    <div class="mini-lbl">Assentos</div>
+                    <div class="mini-val ita">0</div>
+                    <div class="mini-sub" style="color:var(--text-muted);">0.0% share</div>
+                </div>
+                <div class="kpi-mini-card" style="border-color: var(--accent-purple); opacity: 0.5;">
+                    <div class="mini-lbl">Viagens</div>
+                    <div class="mini-val ita">0</div>
+                    <div class="mini-sub" style="color:var(--text-muted);">0.0% share</div>
+                </div>
+            </div>
+        </div>
+        <div class="c-footer">
+            <button class="c-btn">🎯 Analisar no Pricing ➔</button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
